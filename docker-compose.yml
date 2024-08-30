@@ -1,0 +1,73 @@
+services:
+  user_service:
+    build: ./user
+    container_name: user_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/userdb?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    networks:
+      - app_network
+      
+  wallet_service:
+    build: ./wallet
+    container_name: wallet_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/walletdb?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    networks:
+      - app_network
+
+  record_service:
+    build: ./record
+    container_name: record_service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/recorddb?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    networks:
+      - app_network
+
+  transaction_service:
+    build: ./transaction
+    container_name: transaction_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/transactiondb?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
